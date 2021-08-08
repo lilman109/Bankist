@@ -4,5 +4,8 @@
   "main": "index.js",
   "repository": "git@github.com:lilman109/Bankist.git",
   "author": "lilman109 <akira.yoshidasjsu@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "live-server": "^1.2.1"
+  }
 }

@@ -61,6 +61,55 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'JPY',
+});
+
+const displayMovements = movements => {
+  containerMovements.innerHTML = '';
+
+  movements.forEach((movement, index) => {
+    const type = movement > 0 ? 'deposit' : 'withdrawal';
+
+    const html = `
+        <div class="movements__row">
+          <div class="movements__type movements__type--${type}">
+          ${index + 1} ${type}
+          </div>
+          <div class="movements__date">3 days ago</div>
+          <div class="movements__value">${formatter.format(movement)}</div>
+        </div>
+      `;
+
+    containerMovements.insertAdjacentHTML('afterbegin', html);
+  });
+};
+
+displayMovements(account1.movements);
+
+const createUsernames = accounts => {
+  accounts.forEach(account => {
+    account.userName = account.owner
+      .toLowerCase()
+      .split(' ')
+      .map(name => name[0])
+      .join('');
+  });
+};
+
+createUsernames(accounts);
+
+const calceDisplayBalance = movements => {
+  const balance = movements.reduce((acc, movement) => {
+    return (acc += movement);
+  }, 0);
+
+  labelBalance.textContent = `${formatter.format(balance)}`;
+};
+
+calceDisplayBalance(account1.movements);
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -73,4 +122,19 @@ const currencies = new Map([
 
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
+const deposits = movements.filter(movement => {
+  return movement > 0;
+});
+
+const withdrawals = movements.filter(movement => {
+  return movement < 0;
+});
+
+const balance = movements.reduce((acc, movement) => {
+  return (acc += movement);
+}, 0);
+
+console.log(deposits);
+console.log(withdrawals);
+console.log(balance);
 /////////////////////////////////////////////////
