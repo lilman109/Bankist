@@ -1,0 +1,8 @@
+{
+  "name": "Bankist",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:lilman109/Bankist.git",
+  "author": "lilman109 <akira.yoshidasjsu@gmail.com>",
+  "license": "MIT"
+}
