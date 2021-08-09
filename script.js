@@ -61,6 +61,21 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+let currentAccount;
+
+// create usernames
+const createUsernames = accounts => {
+  accounts.forEach(account => {
+    account.userName = account.owner
+      .toLowerCase()
+      .split(' ')
+      .map(name => name[0])
+      .join('');
+  });
+};
+
+createUsernames(accounts);
+
 // formatter to display currency
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -88,20 +103,29 @@ const displayMovements = movements => {
   });
 };
 
-displayMovements(account1.movements);
+// Login button event listner
+btnLogin.addEventListener('click', event => {
+  event.preventDefault();
 
-// create usernames
-const createUsernames = accounts => {
-  accounts.forEach(account => {
-    account.userName = account.owner
-      .toLowerCase()
-      .split(' ')
-      .map(name => name[0])
-      .join('');
-  });
-};
+  currentAccount = accounts.find(
+    account => account.userName === inputLoginUsername.value
+  );
 
-createUsernames(accounts);
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    labelWelcome.textContent = `Welcome back, ${
+      currentAccount.owner.split(' ')[0]
+    }`;
+
+    containerApp.style.opacity = 100;
+
+    displayMovements(currentAccount.movements);
+    calceDisplayBalance(currentAccount.movements);
+    calcDisplaySummary(currentAccount);
+    inputLoginUsername.value = inputLoginPin.value = '';
+  }
+  inputLoginUsername.blur();
+  inputLoginPin.blur();
+});
 
 // calculate and display balance
 const calceDisplayBalance = movements => {
@@ -112,32 +136,28 @@ const calceDisplayBalance = movements => {
   labelBalance.textContent = `${formatter.format(balance)}`;
 };
 
-calceDisplayBalance(account1.movements);
-
 // calculate and display summary
-const calcDisplaySummary = movements => {
-  const incomes = movements
+const calcDisplaySummary = account => {
+  const incomes = account.movements
     .filter(movement => movement > 0)
     .reduce((acc, movement) => acc + movement, 0);
 
   labelSumIn.textContent = formatter.format(incomes);
 
-  const out = movements
+  const out = account.movements
     .filter(movement => movement < 0)
     .reduce((acc, movement) => acc + movement, 0);
 
   labelSumOut.textContent = formatter.format(Math.abs(out));
 
-  const interests = movements
+  const interests = account.movements
     .filter(movement => movement > 0)
-    .map(deposit => (deposit * 1.2) / 100)
+    .map(deposit => (deposit * account.interestRate) / 100)
     .filter(interest => interest >= 1)
     .reduce((acc, interest) => acc + interest, 0);
 
   labelSumInterest.textContent = formatter.format(interests);
 };
-
-calcDisplaySummary(account1.movements);
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -149,21 +169,22 @@ const currencies = new Map([
   ['GBP', 'Pound sterling'],
 ]);
 
-const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+const deposits = movements => {
+  movements.filter(movement => {
+    return movement > 0;
+  });
+};
 
-const deposits = movements.filter(movement => {
-  return movement > 0;
-});
+const withdrawals = movements => {
+  movements.filter(movement => {
+    return movement < 0;
+  });
+};
 
-const withdrawals = movements.filter(movement => {
-  return movement < 0;
-});
+const balance = movements => {
+  movements.reduce((acc, movement) => {
+    return (acc += movement);
+  }, 0);
+};
 
-const balance = movements.reduce((acc, movement) => {
-  return (acc += movement);
-}, 0);
-
-console.log(deposits);
-console.log(withdrawals);
-console.log(balance);
 /////////////////////////////////////////////////
