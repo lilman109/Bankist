@@ -83,10 +83,12 @@ const formatter = new Intl.NumberFormat('en-US', {
 });
 
 // display each movments
-const displayMovements = movements => {
+const displayMovements = (movements, sort = false) => {
   containerMovements.innerHTML = '';
 
-  movements.forEach((movement, index) => {
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+
+  movs.forEach((movement, index) => {
     const type = movement > 0 ? 'deposit' : 'withdrawal';
 
     const html = `
@@ -190,6 +192,32 @@ btnTransfer.addEventListener('click', event => {
   }
 });
 
+// loan
+btnLoan.addEventListener('click', event => {
+  event.preventDefault();
+
+  const amount = Number(inputLoanAmount.value);
+
+  if (
+    amount > 0 &&
+    currentAccount.movements.some(movement => movement >= amount * 0.1)
+  ) {
+    currentAccount.movements.push(amount);
+    updateUI(currentAccount);
+  }
+
+  inputLoanAmount.value = '';
+  inputLoanAmount.blur();
+});
+
+// sorting
+let sorted = false;
+btnSort.addEventListener('click', event => {
+  event.preventDefault();
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
+});
+
 // closing account
 btnClose.addEventListener('click', event => {
   event.preventDefault();
@@ -210,7 +238,7 @@ btnClose.addEventListener('click', event => {
 
   inputClosePin.value = inputCloseUsername.value = '';
   inputCloseUsername.blur();
-  inputCloseUsername.blur();
+  inputClosePin.blur();
 });
 
 /////////////////////////////////////////////////
