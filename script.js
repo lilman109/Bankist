@@ -61,11 +61,13 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+// formatter to display currency
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'JPY',
 });
 
+// display each movments
 const displayMovements = movements => {
   containerMovements.innerHTML = '';
 
@@ -88,6 +90,7 @@ const displayMovements = movements => {
 
 displayMovements(account1.movements);
 
+// create usernames
 const createUsernames = accounts => {
   accounts.forEach(account => {
     account.userName = account.owner
@@ -100,6 +103,7 @@ const createUsernames = accounts => {
 
 createUsernames(accounts);
 
+// calculate and display balance
 const calceDisplayBalance = movements => {
   const balance = movements.reduce((acc, movement) => {
     return (acc += movement);
@@ -110,6 +114,7 @@ const calceDisplayBalance = movements => {
 
 calceDisplayBalance(account1.movements);
 
+// calculate and display summary
 const calcDisplaySummary = movements => {
   const incomes = movements
     .filter(movement => movement > 0)
