@@ -110,6 +110,30 @@ const calceDisplayBalance = movements => {
 
 calceDisplayBalance(account1.movements);
 
+const calcDisplaySummary = movements => {
+  const incomes = movements
+    .filter(movement => movement > 0)
+    .reduce((acc, movement) => acc + movement, 0);
+
+  labelSumIn.textContent = formatter.format(incomes);
+
+  const out = movements
+    .filter(movement => movement < 0)
+    .reduce((acc, movement) => acc + movement, 0);
+
+  labelSumOut.textContent = formatter.format(Math.abs(out));
+
+  const interests = movements
+    .filter(movement => movement > 0)
+    .map(deposit => (deposit * 1.2) / 100)
+    .filter(interest => interest >= 1)
+    .reduce((acc, interest) => acc + interest, 0);
+
+  labelSumInterest.textContent = formatter.format(interests);
+};
+
+calcDisplaySummary(account1.movements);
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
