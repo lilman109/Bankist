@@ -118,22 +118,49 @@ btnLogin.addEventListener('click', event => {
 
     containerApp.style.opacity = 100;
 
-    displayMovements(currentAccount.movements);
-    calceDisplayBalance(currentAccount.movements);
-    calcDisplaySummary(currentAccount);
-    inputLoginUsername.value = inputLoginPin.value = '';
+    updateUI(currentAccount);
   }
   inputLoginUsername.blur();
   inputLoginPin.blur();
 });
 
+const updateUI = account => {
+  displayMovements(currentAccount.movements);
+  calceDisplayBalance(currentAccount);
+  calcDisplaySummary(currentAccount);
+  inputLoginUsername.value = inputLoginPin.value = '';
+};
+
+btnTransfer.addEventListener('click', event => {
+  event.preventDefault();
+  const transferAmount = Number(inputTransferAmount.value);
+  const receiverAccount = accounts.find(
+    account => account.userName === inputTransferTo.value
+  );
+
+  inputTransferTo.value = inputTransferAmount.value = '';
+  inputTransferTo.blur();
+  inputTransferAmount.blur();
+
+  if (
+    transferAmount > 0 &&
+    receiverAccount &&
+    currentAccount.balance >= transferAmount &&
+    receiverAccount.userName !== currentAccount.userName
+  ) {
+    currentAccount.movements.push(-transferAmount);
+    receiverAccount.movements.push(transferAmount);
+    updateUI(currentAccount);
+  }
+});
+
 // calculate and display balance
-const calceDisplayBalance = movements => {
-  const balance = movements.reduce((acc, movement) => {
+const calceDisplayBalance = account => {
+  account.balance = account.movements.reduce((acc, movement) => {
     return (acc += movement);
   }, 0);
 
-  labelBalance.textContent = `${formatter.format(balance)}`;
+  labelBalance.textContent = `${formatter.format(account.balance)}`;
 };
 
 // calculate and display summary
