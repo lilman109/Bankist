@@ -63,6 +63,16 @@ const inputClosePin = document.querySelector('.form__input--pin');
 
 let currentAccount;
 
+const now = new Date().toLocaleDateString('en-us', {
+  year: 'numeric',
+  day: 'numeric',
+  month: 'short',
+  minute: 'numeric',
+  hour: 'numeric',
+});
+
+labelDate.textContent = now;
+
 // create usernames
 const createUsernames = accounts => {
   accounts.forEach(account => {
@@ -79,7 +89,7 @@ createUsernames(accounts);
 // formatter to display currency
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
-  currency: 'JPY',
+  currency: 'USD',
 });
 
 // display each movments
