@@ -17,9 +17,9 @@ const account1 = {
     '2020-01-28T09:15:04.904Z',
     '2020-04-01T10:17:24.185Z',
     '2020-05-08T14:11:59.604Z',
-    '2020-05-27T17:01:17.194Z',
-    '2020-07-11T23:36:17.929Z',
-    '2020-07-12T10:51:36.790Z',
+    '2021-08-06T17:01:17.194Z',
+    '2021-08-10T23:36:17.929Z',
+    '2021-08-14T10:51:36.790Z',
   ],
   currency: 'EUR',
   locale: 'pt-PT', // de-DE
@@ -123,6 +123,20 @@ const transactionDate = timestamp =>
     month: 'short',
   });
 
+const formatMovementDate = date => {
+  const calcDaysPassed = (date1, date2) => {
+    return Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
+  };
+
+  const daysPassed = calcDaysPassed(date, new Date());
+
+  if (daysPassed === 0) return 'Today';
+  if (daysPassed === 1) return 'Yesterday';
+  if (daysPassed <= 7) return `${daysPassed} days ago`;
+
+  return transactionDate(date);
+};
+
 // create usernames
 const createUsernames = accounts => {
   accounts.forEach(account => {
@@ -158,8 +172,8 @@ const displayMovements = (account, sort = false) => {
           <div class="movements__type movements__type--${type}">
           ${index + 1} ${type}
           </div>
-          <div class="movements__date">${transactionDate(
-            account.movementsDates[index]
+          <div class="movements__date">${formatMovementDate(
+            new Date(account.movementsDates[index])
           )}</div>
           <div class="movements__value">${formatter.format(movement)}</div>
         </div>
@@ -226,7 +240,7 @@ btnLogin.addEventListener('click', event => {
 
     containerApp.style.opacity = 100;
 
-    labelDate.textContent = now;
+    labelDate.textContent = dateToString;
 
     updateUI(currentAccount);
   }
