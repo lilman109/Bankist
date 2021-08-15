@@ -283,7 +283,7 @@ btnLoan.addEventListener('click', event => {
 let sorted = false;
 btnSort.addEventListener('click', event => {
   event.preventDefault();
-  displayMovements(currentAccount.movements, !sorted);
+  displayMovements(currentAccount, !sorted);
   sorted = !sorted;
 });
 
