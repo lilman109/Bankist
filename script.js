@@ -102,7 +102,7 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-let currentAccount;
+let currentAccount, timer;
 
 const now = new Date();
 
@@ -146,6 +146,31 @@ const createUsernames = accounts => {
       .map(name => name[0])
       .join('');
   });
+};
+
+const startLogoutTimer = () => {
+  const tick = () => {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const secs = String(time % 60).padStart(2, 0);
+    labelTimer.textContent = `${min}:${secs}`;
+
+    if (time <= 0) {
+      clearInterval(timer);
+      labelWelcome.textContent = 'Log in to get started';
+      containerApp.style.opacity = 0;
+    }
+    time--;
+  };
+
+  let time = 5 * 60;
+  tick();
+  timer = setInterval(tick, 1000);
+  return timer;
+};
+
+const resetTimer = () => {
+  if (timer) clearInterval(timer);
+  timer = startLogoutTimer();
 };
 
 createUsernames(accounts);
@@ -238,11 +263,13 @@ btnLogin.addEventListener('click', event => {
       currentAccount.owner.split(' ')[0]
     }`;
 
+    resetTimer();
+
+    updateUI(currentAccount);
+
     containerApp.style.opacity = 100;
 
     labelDate.textContent = dateToString;
-
-    updateUI(currentAccount);
   }
   inputLoginUsername.blur();
   inputLoginPin.blur();
@@ -270,6 +297,8 @@ btnTransfer.addEventListener('click', event => {
     currentAccount.movementsDates.push(dateToISOString);
     receiverAccount.movements.push(transferAmount);
     receiverAccount.movementsDates.push(dateToISOString);
+
+    resetTimer();
     updateUI(currentAccount);
   }
 });
@@ -286,6 +315,8 @@ btnLoan.addEventListener('click', event => {
   ) {
     currentAccount.movements.push(amount);
     currentAccount.movementsDates.push(dateToISOString);
+
+    resetTimer();
     updateUI(currentAccount);
   }
 
