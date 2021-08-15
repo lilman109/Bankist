@@ -104,7 +104,9 @@ const inputClosePin = document.querySelector('.form__input--pin');
 
 let currentAccount;
 
-const now = new Date().toLocaleDateString('en-us', {
+const now = new Date();
+
+const dateToString = now.toLocaleDateString('en-us', {
   year: 'numeric',
   day: 'numeric',
   month: 'short',
@@ -112,7 +114,7 @@ const now = new Date().toLocaleDateString('en-us', {
   hour: 'numeric',
 });
 
-labelDate.textContent = now;
+const dateToISOString = now.toISOString();
 
 const transactionDate = timestamp =>
   new Date(timestamp).toLocaleDateString('en-us', {
@@ -224,6 +226,8 @@ btnLogin.addEventListener('click', event => {
 
     containerApp.style.opacity = 100;
 
+    labelDate.textContent = now;
+
     updateUI(currentAccount);
   }
   inputLoginUsername.blur();
@@ -249,7 +253,9 @@ btnTransfer.addEventListener('click', event => {
     receiverAccount.userName !== currentAccount.userName
   ) {
     currentAccount.movements.push(-transferAmount);
+    currentAccount.movementsDates.push(dateToISOString);
     receiverAccount.movements.push(transferAmount);
+    receiverAccount.movementsDates.push(dateToISOString);
     updateUI(currentAccount);
   }
 });
@@ -265,6 +271,7 @@ btnLoan.addEventListener('click', event => {
     currentAccount.movements.some(movement => movement >= amount * 0.1)
   ) {
     currentAccount.movements.push(amount);
+    currentAccount.movementsDates.push(dateToISOString);
     updateUI(currentAccount);
   }
 
